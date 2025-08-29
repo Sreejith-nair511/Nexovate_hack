@@ -1,0 +1,21 @@
+[
+  {
+    "blockNo": 0,
+    "timestamp": 1756504591510,
+    "transactions": [
+      {
+        "txId": "74ead5aebaed50ecb097325550903e24",
+        "blockNo": 0,
+        "timestamp": 1756504591508,
+        "actor": "system:genesis",
+        "action": "GENESIS",
+        "details": {
+          "message": "Arogya Rakshak Blockchain Initialized"
+        },
+        "hash": "c3ea2bb5db3a3d40f7c123c972402f63ba6458b348475f7c4790de5bfb22d053"
+      }
+    ],
+    "previousHash": "0",
+    "blockHash": "7564ed336e36bd1a2d141ed5607c25a410fa5687b74506733f385424a459f6cc"
+  }
+]
