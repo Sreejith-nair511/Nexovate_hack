@@ -1,190 +1,212 @@
 "use client"
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { User, Stethoscope, Building2, Search, ArrowRight, Shield, Activity, FileText, Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Activity, Users, FileText, Shield, Heart, Smartphone, QrCode, MessageSquare, CreditCard, BarChart3, Stethoscope, Building2, Network, Zap, Database, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
-export default function DashboardHome() {
-  const roles = [
-    {
-      title: "Patient Dashboard",
-      description: "Upload encrypted files, manage access permissions, and view your medical record history",
-      icon: User,
-      href: "/dashboard/patient",
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-800",
-    },
-    {
-      title: "Doctor Dashboard",
-      description: "Access authorized patient records, decrypt files, and request additional permissions",
-      icon: Stethoscope,
-      href: "/dashboard/doctor",
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      textColor: "text-green-800",
-    },
-    {
-      title: "Hospital Staff Panel",
-      description: "Emergency override access for critical medical situations with full audit logging",
-      icon: Building2,
-      href: "/dashboard/staff",
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-800",
-    },
-    {
-      title: "Auditor View",
-      description: "Comprehensive access monitoring, compliance reporting, and audit trail analysis",
-      icon: Search,
-      href: "/dashboard/auditor",
-      color: "from-orange-500 to-orange-600",
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-800",
-    },
-  ]
+interface RoleCard {
+  role: string
+  title: string
+  description: string
+  icon: React.ReactNode
+  color: string
+  features: string[]
+  path: string
+}
 
-  const systemStats = {
-    totalRecords: 15847,
-    activeUsers: 342,
-    emergencyAccesses: 23,
-    auditLogs: 8934,
+const roleCards: RoleCard[] = [
+  {
+    role: 'patient',
+    title: 'Patient Portal',
+    description: 'Access your medical records, appointments, and health data securely on the blockchain.',
+    icon: <Heart className="w-8 h-8" />,
+    color: 'bg-blue-500',
+    features: ['Medical Records', 'Appointments', 'Prescriptions', 'Health Reports'],
+    path: '/dashboard/patient'
+  },
+  {
+    role: 'doctor',
+    title: 'Doctor Dashboard',
+    description: 'Manage patient records, create prescriptions, and access medical histories.',
+    icon: <Stethoscope className="w-8 h-8" />,
+    color: 'bg-green-500',
+    features: ['Patient Management', 'Prescriptions', 'Medical History', 'Consultations'],
+    path: '/dashboard/doctor'
+  },
+  {
+    role: 'staff',
+    title: 'Hospital Staff',
+    description: 'Administrative tools for managing hospital operations and patient data.',
+    icon: <Building2 className="w-8 h-8" />,
+    color: 'bg-purple-500',
+    features: ['Patient Registration', 'Billing', 'Scheduling', 'Reports'],
+    path: '/dashboard/staff'
+  },
+  {
+    role: 'auditor',
+    title: 'Compliance Auditor',
+    description: 'Monitor compliance, audit trails, and ensure regulatory adherence.',
+    icon: <Shield className="w-8 h-8" />,
+    color: 'bg-orange-500',
+    features: ['Audit Trails', 'Compliance Reports', 'Risk Assessment', 'Violations'],
+    path: '/dashboard/auditor'
+  },
+  {
+    role: 'asha',
+    title: 'ASHA Worker',
+    description: 'Community health worker tools for rural healthcare management.',
+    icon: <Users className="w-8 h-8" />,
+    color: 'bg-pink-500',
+    features: ['Community Health', 'Patient Visits', 'Health Education', 'Data Collection'],
+    path: '/dashboard/asha'
   }
+]
 
+const systemStats = [
+  { label: 'Total Patients', value: '2,847', icon: <Users className="w-5 h-5" />, color: 'text-blue-600' },
+  { label: 'Medical Records', value: '15,293', icon: <FileText className="w-5 h-5" />, color: 'text-green-600' },
+  { label: 'Blockchain Transactions', value: '45,821', icon: <Activity className="w-5 h-5" />, color: 'text-purple-600' },
+  { label: 'Active Hospitals', value: '127', icon: <Building2 className="w-5 h-5" />, color: 'text-orange-600' }
+]
+
+const quickAccessFeatures = [
+  {
+    title: 'Blockchain Explorer',
+    description: 'Real-time blockchain monitoring with Indian hospital nodes',
+    icon: <Network className="w-6 h-6" />,
+    path: '/dashboard/blockchain',
+    color: 'bg-blue-500'
+  },
+  {
+    title: 'QR Health Cards',
+    description: 'Generate and scan patient QR health cards',
+    icon: <QrCode className="w-6 h-6" />,
+    path: '/dashboard/qr',
+    color: 'bg-green-500'
+  },
+  {
+    title: 'SMS/USSD Access',
+    description: 'Rural healthcare access via SMS and USSD',
+    icon: <MessageSquare className="w-6 h-6" />,
+    path: '/dashboard/sms',
+    color: 'bg-purple-500'
+  },
+  {
+    title: 'Insurance Claims',
+    description: 'Manage insurance claims and pre-authorization',
+    icon: <CreditCard className="w-6 h-6" />,
+    path: '/dashboard/insurance',
+    color: 'bg-orange-500'
+  },
+  {
+    title: 'Compliance Analytics',
+    description: 'Hospital compliance tracking and analytics',
+    icon: <BarChart3 className="w-6 h-6" />,
+    path: '/dashboard/compliance',
+    color: 'bg-pink-500'
+  },
+  {
+    title: 'ZK-Proof System',
+    description: 'Privacy-preserving verification system',
+    icon: <Zap className="w-6 h-6" />,
+    path: '/dashboard/blockchain?tab=zkproofs',
+    color: 'bg-indigo-500'
+  }
+]
+
+export default function DashboardHome() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-slate-800 mb-4">Welcome to Arogya Rakshak</h1>
-        <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-          Secure, decentralized medical record management with blockchain technology. Choose your role to access the
-          appropriate dashboard.
+        <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-200 mb-4">Welcome to Arogya Rakshak</h1>
+        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          Secure, decentralized medical record management with blockchain technology for India.
         </p>
       </div>
 
       {/* System Statistics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Total Records</p>
-                <p className="text-2xl font-bold text-slate-800">{systemStats.totalRecords.toLocaleString()}</p>
+        {systemStats.map((stat, index) => (
+          <Card key={index} className="shadow-lg border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{stat.label}</p>
+                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                </div>
+                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                  {stat.icon}
+                </div>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FileText className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        <Card className="shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Active Users</p>
-                <p className="text-2xl font-bold text-slate-800">{systemStats.activeUsers}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Emergency Access</p>
-                <p className="text-2xl font-bold text-red-600">{systemStats.emergencyAccesses}</p>
-              </div>
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <Shield className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Audit Logs</p>
-                <p className="text-2xl font-bold text-slate-800">{systemStats.auditLogs.toLocaleString()}</p>
-              </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <Activity className="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Quick Access Features */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Quick Access Features</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {quickAccessFeatures.map((feature, index) => (
+            <Link key={index} href={feature.path}>
+              <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center text-white`}>
+                      {feature.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Role Selection */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {roles.map((role, index) => {
-          const Icon = role.icon
-          return (
-            <Card key={index} className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group">
-              <CardHeader className={`${role.bgColor} rounded-t-lg`}>
-                <CardTitle className={`flex items-center gap-3 ${role.textColor}`}>
-                  <div
-                    className={`w-12 h-12 bg-gradient-to-br ${role.color} rounded-xl flex items-center justify-center`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
+      <div>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Role-Based Access</h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          {roleCards.map((role, index) => (
+            <Link key={index} href={role.path}>
+              <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                <CardHeader className={`${role.color} rounded-t-lg`}>
+                  <CardTitle className="flex items-center gap-3 text-white">
+                    {role.icon}
+                    {role.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">{role.description}</p>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    {role.features.map((feature, featureIndex) => (
+                      <Badge key={featureIndex} variant="secondary" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
                   </div>
-                  {role.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-slate-600 mb-6 leading-relaxed">{role.description}</p>
-                <Link href={role.href}>
-                  <Button className="w-full group-hover:scale-105 transition-transform duration-200">
-                    Access Dashboard
+                  <Button className="w-full group-hover:bg-blue-600 transition-colors">
+                    Access {role.title}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          )
-        })}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
-
-      {/* Security Notice */}
-      <Card className="border-blue-200 bg-blue-50 shadow-lg">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-blue-800 mb-2">Security & Privacy</h3>
-              <p className="text-blue-700 mb-4">
-                All medical records are encrypted with AES-256 encryption and stored on a decentralized blockchain
-                network. Access is controlled through smart contracts and all interactions are immutably logged for
-                audit purposes.
-              </p>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-blue-600">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                  <Shield className="w-3 h-3 mr-1" />
-                  HIPAA Compliant
-                </Badge>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                  <Activity className="w-3 h-3 mr-1" />
-                  Blockchain Secured
-                </Badge>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                  <FileText className="w-3 h-3 mr-1" />
-                  Audit Ready
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
