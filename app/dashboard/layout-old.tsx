@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -197,54 +197,83 @@ export default function DashboardLayout({
                 {/* Theme Toggle */}
                 <Button
                   variant="ghost"
+                <Button 
+                  variant="ghost" 
                   size="sm"
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="w-9 h-9 p-0"
+                  onClick={() => {
+                    localStorage.removeItem('arogya_user')
+                    window.location.href = '/auth/login'
+                  }}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  Logout
                 </Button>
 
-                {/* User Menu */}
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-slate-300 dark:bg-slate-600 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                {/* NFT Health Identity Badge */}
+                <Badge
+                  variant="secondary"
+                  className="hidden md:flex items-center gap-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-700 transition-colors duration-300"
+                >
+                  <Shield className="w-3 h-3" />
+                  Health ID NFT
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex">
+          {/* Sidebar */}
+          <aside
+            className={`${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-transform duration-300 ease-in-out lg:transition-none`}
+          >
+            <div className="flex flex-col h-full pt-16 lg:pt-0">
+              <nav className="flex-1 px-4 py-6 space-y-2">
+                {navigation.map((item) => {
+                  const isActive = pathname === item.href
+                  const Icon = item.icon
+
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        isActive
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      }`}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
+              </nav>
+
+              {/* Emergency Alert */}
+              <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-red-800 dark:text-red-300 text-sm font-medium mb-1">
+                    <AlertTriangle className="w-4 h-4" />
+                    Emergency Access
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleLogout}
-                    className="text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hidden sm:flex"
-                  >
-                    <LogOut className="w-4 h-4 mr-1" />
-                    Logout
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleLogout}
-                    className="w-9 h-9 p-0 sm:hidden text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </Button>
+                  <p className="text-red-600 dark:text-red-400 text-xs">Hospital staff can override access in emergency situations</p>
                 </div>
               </div>
             </div>
-          </nav>
+          </aside>
+
+          {/* Overlay for mobile */}
+          {sidebarOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" onClick={() => setSidebarOpen(false)} />
+          )}
 
           {/* Main Content */}
-          <main className="flex-1 p-4 lg:p-6 overflow-auto">
-            {children}
-          </main>
+          <main className="flex-1 min-w-0">{children}</main>
         </div>
-
-        {/* Mobile Sidebar Overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
       </div>
     </AuthWrapper>
   )

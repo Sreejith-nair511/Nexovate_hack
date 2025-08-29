@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Activity, Users, FileText, Shield, Heart, Smartphone, QrCode, MessageSquare, CreditCard, BarChart3, Stethoscope, Building2, Network, Zap, Database, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import LedgerVisualization from "@/components/ledger-visualization"
 
 interface RoleCard {
   role: string
@@ -118,14 +119,36 @@ const quickAccessFeatures = [
 ]
 
 export default function DashboardHome() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [actionMessage, setActionMessage] = useState('')
+
+  const handleFeatureClick = async (featureName: string) => {
+    setIsLoading(true)
+    setActionMessage(`Initializing ${featureName}...`)
+    
+    // Simulate loading and blockchain verification
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    setActionMessage(`${featureName} loaded successfully!`)
+    
+    setTimeout(() => {
+      setActionMessage('')
+      setIsLoading(false)
+    }, 2000)
+  }
+
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 lg:p-6 max-w-7xl mx-auto space-y-6 lg:space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-200 mb-4">Welcome to Arogya Rakshak</h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+        <h1 className="text-2xl lg:text-4xl font-bold text-slate-800 dark:text-slate-200 mb-4">Welcome to Arogya Rakshak</h1>
+        <p className="text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
           Secure, decentralized medical record management with blockchain technology for India.
         </p>
+        {actionMessage && (
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-blue-800 dark:text-blue-200 font-medium">{actionMessage}</p>
+          </div>
+        )}
       </div>
 
       {/* System Statistics */}
@@ -153,7 +176,10 @@ export default function DashboardHome() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quickAccessFeatures.map((feature, index) => (
             <Link key={index} href={feature.path}>
-              <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+              <Card 
+                className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                onClick={() => handleFeatureClick(feature.title)}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center text-white`}>
@@ -175,13 +201,22 @@ export default function DashboardHome() {
         </div>
       </div>
 
+      {/* Live Ledger Visualization */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Live Blockchain Ledger</h2>
+        <LedgerVisualization />
+      </div>
+
       {/* Role Selection */}
       <div>
         <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Role-Based Access</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {roleCards.map((role, index) => (
             <Link key={index} href={role.path}>
-              <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+              <Card 
+                className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                onClick={() => handleFeatureClick(role.title)}
+              >
                 <CardHeader className={`${role.color} rounded-t-lg`}>
                   <CardTitle className="flex items-center gap-3 text-white">
                     {role.icon}
@@ -197,9 +232,18 @@ export default function DashboardHome() {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full group-hover:bg-blue-600 transition-colors">
-                    Access {role.title}
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Button className="w-full group-hover:bg-blue-600 transition-colors" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        Access {role.title}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
                   </Button>
                 </CardContent>
               </Card>
