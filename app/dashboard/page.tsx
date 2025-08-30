@@ -16,6 +16,7 @@ interface RoleCard {
   color: string
   features: string[]
   path: string
+  users: string
 }
 
 const roleCards: RoleCard[] = [
@@ -26,7 +27,8 @@ const roleCards: RoleCard[] = [
     icon: <Heart className="w-8 h-8" />,
     color: 'bg-blue-500',
     features: ['Medical Records', 'Appointments', 'Prescriptions', 'Health Reports'],
-    path: '/dashboard/patient'
+    path: '/dashboard/patient',
+    users: '2,847'
   },
   {
     role: 'doctor',
@@ -35,7 +37,8 @@ const roleCards: RoleCard[] = [
     icon: <Stethoscope className="w-8 h-8" />,
     color: 'bg-green-500',
     features: ['Patient Management', 'Prescriptions', 'Medical History', 'Consultations'],
-    path: '/dashboard/doctor'
+    path: '/dashboard/doctor',
+    users: '1,234'
   },
   {
     role: 'staff',
@@ -44,7 +47,8 @@ const roleCards: RoleCard[] = [
     icon: <Building2 className="w-8 h-8" />,
     color: 'bg-purple-500',
     features: ['Patient Registration', 'Billing', 'Scheduling', 'Reports'],
-    path: '/dashboard/staff'
+    path: '/dashboard/staff',
+    users: '567'
   },
   {
     role: 'auditor',
@@ -53,7 +57,8 @@ const roleCards: RoleCard[] = [
     icon: <Shield className="w-8 h-8" />,
     color: 'bg-orange-500',
     features: ['Audit Trails', 'Compliance Reports', 'Risk Assessment', 'Violations'],
-    path: '/dashboard/auditor'
+    path: '/dashboard/auditor',
+    users: '89'
   },
   {
     role: 'asha',
@@ -62,7 +67,8 @@ const roleCards: RoleCard[] = [
     icon: <Users className="w-8 h-8" />,
     color: 'bg-pink-500',
     features: ['Community Health', 'Patient Visits', 'Health Education', 'Data Collection'],
-    path: '/dashboard/asha'
+    path: '/dashboard/asha',
+    users: '456'
   }
 ]
 
@@ -121,6 +127,7 @@ const quickAccessFeatures = [
 export default function DashboardHome() {
   const [isLoading, setIsLoading] = useState(false)
   const [actionMessage, setActionMessage] = useState('')
+  const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({})
 
   const handleFeatureClick = async (featureName: string) => {
     setIsLoading(true)
@@ -134,6 +141,17 @@ export default function DashboardHome() {
       setActionMessage('')
       setIsLoading(false)
     }, 2000)
+  }
+
+  const handleRoleAccess = async (roleTitle: string) => {
+    setLoadingStates(prev => ({ ...prev, [roleTitle]: true }))
+    
+    // Simulate loading and authentication
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    setTimeout(() => {
+      setLoadingStates(prev => ({ ...prev, [roleTitle]: false }))
+    }, 500)
   }
 
   return (
@@ -152,17 +170,19 @@ export default function DashboardHome() {
       </div>
 
       {/* System Statistics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {systemStats.map((stat, index) => (
           <Card key={index} className="shadow-lg border-0">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{stat.label}</p>
-                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">{stat.label}</p>
+                  <p className={`text-lg sm:text-2xl font-bold ${stat.color} mt-1`}>{stat.value}</p>
                 </div>
-                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                  {stat.icon}
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                  <span className="text-slate-600 dark:text-slate-400 scale-75 sm:scale-100">
+                    {stat.icon}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -172,24 +192,26 @@ export default function DashboardHome() {
 
       {/* Quick Access Features */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Quick Access Features</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4 sm:mb-6">Quick Access Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {quickAccessFeatures.map((feature, index) => (
             <Link key={index} href={feature.path}>
               <Card 
-                className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer active:scale-95"
                 onClick={() => handleFeatureClick(feature.title)}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center text-white`}>
-                      {feature.icon}
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 ${feature.color} rounded-lg flex items-center justify-center text-white flex-shrink-0`}>
+                      <span className="scale-90 sm:scale-100">
+                        {feature.icon}
+                      </span>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors text-sm sm:text-base">
                         {feature.title}
                       </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
                         {feature.description}
                       </p>
                     </div>
@@ -203,51 +225,47 @@ export default function DashboardHome() {
 
       {/* Live Ledger Visualization */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Live Blockchain Ledger</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4 sm:mb-6">Live Blockchain Ledger</h2>
         <LedgerVisualization />
       </div>
 
-      {/* Role Selection */}
+      {/* Role Access Cards */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">Role-Based Access</h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4 sm:mb-6">Role-Based Access</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {roleCards.map((role, index) => (
-            <Link key={index} href={role.path}>
-              <Card 
-                className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-                onClick={() => handleFeatureClick(role.title)}
-              >
-                <CardHeader className={`${role.color} rounded-t-lg`}>
-                  <CardTitle className="flex items-center gap-3 text-white">
-                    {role.icon}
-                    {role.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">{role.description}</p>
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    {role.features.map((feature, featureIndex) => (
-                      <Badge key={featureIndex} variant="secondary" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
+            <Card key={index} className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 ${role.color} rounded-lg flex items-center justify-center text-white flex-shrink-0`}>
+                    <span className="scale-90 sm:scale-100">
+                      {role.icon}
+                    </span>
                   </div>
-                  <Button className="w-full group-hover:bg-blue-600 transition-colors" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Loading...
-                      </>
-                    ) : (
-                      <>
-                        Access {role.title}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-            </Link>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">{role.title}</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{role.users} active users</p>
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">
+                  {role.description}
+                </p>
+                <Button 
+                  className="w-full h-10 sm:h-11 text-sm sm:text-base active:scale-95 transition-transform"
+                  onClick={() => handleRoleAccess(role.title)}
+                  disabled={loadingStates[role.title]}
+                >
+                  {loadingStates[role.title] ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Accessing...
+                    </>
+                  ) : (
+                    `Access ${role.title} Dashboard`
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

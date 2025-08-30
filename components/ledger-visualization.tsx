@@ -210,48 +210,29 @@ export default function LedgerVisualization() {
               transactions.map((tx) => (
                 <div key={tx.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      {getStatusIcon(tx.status)}
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">
-                            {tx.type}
-                          </Badge>
-                          <Badge className={`text-xs ${getStatusColor(tx.status)}`}>
-                            {tx.status}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          {tx.description}
-                        </p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant="secondary" className="text-xs">
+                          {tx.type}
+                        </Badge>
+                        <Badge className={`text-xs ${getStatusColor(tx.status)}`}>
+                          {tx.status}
+                        </Badge>
                       </div>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        {tx.description}
+                      </p>
                     </div>
-                    {tx.amount && (
-                      <div className="text-right">
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{tx.amount}</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <p className="text-slate-500 dark:text-slate-400">From</p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">{tx.from}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 dark:text-slate-400">To</p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">{tx.to}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500 dark:text-slate-400">Timestamp</p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">{tx.timestamp}</p>
+                    <div className="text-right ml-2 flex-shrink-0">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Timestamp</p>
+                      <p className="font-medium text-slate-800 dark:text-slate-200 text-xs sm:text-sm">{tx.timestamp}</p>
                     </div>
                   </div>
                   
                   <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                      <Hash className="w-3 h-3" />
-                      <span className="font-mono">{tx.hash}</span>
+                      <Hash className="w-3 h-3 flex-shrink-0" />
+                      <span className="font-mono truncate">{tx.hash}</span>
                     </div>
                   </div>
                 </div>
